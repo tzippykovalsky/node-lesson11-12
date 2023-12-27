@@ -45,7 +45,7 @@ export const addToy = async (req, res) => {
         , price
         , color
         , inSale
-        , age
+        , count
 
     } = req.body;
     if (!req.body.name || !req.body.price) {
@@ -54,7 +54,7 @@ export const addToy = async (req, res) => {
     }
 
     try {
-        let newToy=create.Toy( {    name, price, color, inSale, age })
+        let newToy=create.Toy( {    name, price, color, inSale, count })
       await newToy.save();
         res.status(201).json(newToy);
     } catch (err) {
