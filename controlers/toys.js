@@ -14,7 +14,7 @@ export const getAllToys = async (req, res) => {
 }
 
 export const getToyId = async (req, res) => {
-    if (!mongoose.isValidObjectId(req.params.id))//בדיקה שהפרמטר קוד ששלחו הוא פרמטר שיכול להיות קוד
+    if (!mongoose.isValidObjectId(req.params.id))//
         return res.status(400).send("invalid paramter id");
 
     try {
@@ -49,7 +49,7 @@ export const addToy = async (req, res) => {
 
     } = req.body;
     if (!req.body.name || !req.body.price) {
-        res.status(404).send("חסרים פרמרים להוספת ספר");
+        res.status(404).send("חסרים פרמרים להוספת משחק");
 
     }
 
