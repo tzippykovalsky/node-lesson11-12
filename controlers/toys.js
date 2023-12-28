@@ -1,4 +1,4 @@
-import { Toy } from "../toysSchema.js";
+import { Toy } from "../models/toysSchema.js";
 import mongoose from "mongoose";
 
 
@@ -14,7 +14,7 @@ export const getAllToys = async (req, res) => {
 }
 
 export const getToyId = async (req, res) => {
-    if (!mongoose.isValidObjectId(req.params.id))//בדיקה שהפרמטר קוד ששלחו הוא פרמטר שיכול להיות קוד
+    if (!mongoose.isValidObjectId(req.params.id))
         return res.status(400).send("invalid paramter id");
 
     try {
@@ -43,22 +43,19 @@ export const addToy = async (req, res) => {
     let {
         name
         , price
-        , color
         , inSale
-        , age
-
     } = req.body;
     if (!req.body.name || !req.body.price) {
-        res.status(404).send("חסרים פרמרים להוספת ספר");
+        res.status(404).send("חסרים פרמרים להוספת משחק");
 
     }
 
     try {
-        let newToy=create.Toy( {    name, price, color, inSale, age })
-      await newToy.save();
+        let newToy=await Toy.create({ name, price, inSale })
         res.status(201).json(newToy);
     } catch (err) {
         res.status(400).send("cannot create this toy")
+        console.log(err);
     }
 
 

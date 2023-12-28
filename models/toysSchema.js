@@ -7,7 +7,7 @@ const toysSchema = mongoose.Schema({
     },
     price: Number,
     inSale:Boolean,
-    age:Number
+   
 })
 
 export const Toy=mongoose.model("toys",toysSchema);
