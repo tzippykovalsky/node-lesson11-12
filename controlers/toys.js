@@ -30,10 +30,17 @@ export const getToyId = async (req, res) => {
 }
 
 export const deleteToy = async (req, res) => {
+    //בדיקת תקינות על id
     let { id } = req.params;
     if (!mongoose.isValidObjectId(id))
         return res.status(400).send("not valid id")
-    let deletedToy = await Toy.find(id)
+
+//השוואה בין מי שרוצה למחוק לבין מי שהוסיף את הספר
+    let toyToDelete = await Toy.findById(id);
+    if (toyToDelete.userAdded != req.myuser._id &&req.myuser.role!="ADMIN")//לא מובן לי myuser לברר
+        return res.status(403).send("גילינו שניסת למחוק משחק שלא שלך לך ללמוד הלכות גזל")
+//מחיקת ספר במקרה שאופשר
+    let deletedToy = await Toy.findByIdAndDelete(id)
     if (!deletedToy)
         return res.status(404).send("לא נמצא")
     return res.json(deletedToy);
@@ -51,7 +58,10 @@ export const addToy = async (req, res) => {
     }
 
     try {
-        let newToy=await Toy.create({ name, price, inSale })
+        //כאשר משתמש מוסיף משחק אוטומטית נשלוף את הid 
+       // שלו כדי שנוכל לראות מי כביכול הבעלים שלו
+
+        let newToy = await Toy.create({userAdded:req.myuser._id, name, price, inSale })
         res.status(201).json(newToy);
     } catch (err) {
         res.status(400).send("cannot create this toy")

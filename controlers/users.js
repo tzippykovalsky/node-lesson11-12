@@ -1,3 +1,6 @@
+//בדף זה כאשר משתמש נרשם לאתר או שמתחבר עם שם משתמש שלו הוא יקבל טוקן
+
+import { generateToken } from "../config/jwt.js";
 import { User } from "../models/userSchema.js";
 import bcrypt from "bcryptjs";
 
@@ -21,12 +24,13 @@ export const loginUser = async (req, res) => {
             return res.status(400).send("סיסמה אינה תקינה")
 
         let loggedinUser = await User.findOne({ userName });
-        if (!loginUser)
+        if (!loggedinUser)
             return res.status(404).send("לא נמצא משתמש בשם כזה");
         if (!await bcrypt.compare(password, loggedinUser.password))
             return res.status(404).send("לא נמצא משתמש עם סיסמה כזו");
-        let { userName: u, _id, email } = loggedinUser;
-        res.json({ userName: u, _id, email })
+        let { userName: u, _id, email,role } = loggedinUser;
+        let token=generateToken(loggedinUser);//שימוש בפונקציה שיוצרת טוקן
+        res.json({ userName: u, _id, email ,role,token})
 
     }
     catch (err) {
@@ -45,11 +49,13 @@ export const addUser = async (req, res) => {
             return res.status(400).send("סיסמה אינה תקינה")
 
         let hashedPassword = await bcrypt.hash(password, 10);
-        let newUser = await User.create({ userName, email, password: hashedPassword })
-        return res.status(201).json(newUser)
+         let newUser = await User.create({ userName, email, password: hashedPassword })
+
+        let {_id,userName:name,role,email:e}=newUser;//שליפת ערכים ספציפים
+        let token=generateToken(newUser);//שימוש בפונקציה שיוצרת טוקן
+        return res.status(201).json({_id,role,userName:name,token,email:e})
     }
     catch (err) {
         res.status(500).send("התרחשה שגיאה בהוספת המשתמש החדש")
     }
 }
-

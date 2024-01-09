@@ -7,6 +7,8 @@ const toysSchema = mongoose.Schema({
     },
     price: Number,
     inSale:Boolean,
+    userAdded:String,
+    imgUrl:{ type: String,default:"http://localhost:5000/toys/pic3.jpg;"}
    
 })
 
